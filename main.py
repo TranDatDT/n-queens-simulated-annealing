@@ -1,6 +1,5 @@
 import random
 import math
-import decimal
 import time
 
 N_QUEENS = 8
@@ -25,7 +24,7 @@ def cost(queens):
             offset = j - i
             # Queens are in the same diagonal
             if queens[i] == queens[j] - offset \
-                or queens[i] == queens[j] + offset:
+               or queens[i] == queens[j] + offset:
                 h += 1
     return h
 
@@ -38,7 +37,8 @@ def simulated_annealing():
     while temperature > 0:
         temperature *= 0.99
         successor_queen = answer[:]
-        successor_queen[random.randint(0, N_QUEENS - 1)] = random.randint(1, N_QUEENS)
+        successor_queen[random.randint(
+            0, N_QUEENS - 1)] = random.randint(1, N_QUEENS)
         delta = cost(successor_queen) - cost(answer)
 
         if delta < 0:
