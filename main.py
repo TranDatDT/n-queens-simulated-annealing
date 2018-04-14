@@ -20,8 +20,13 @@ def create_board(n):
 
 def cost(chess_board):
     threat = 0
+    m_chessboard = []
+    a_chessboard = []
 
-    m_chessboard = [chess_board.index(i) - i for i in chess_board]
+    for i in chess_board:
+        m_chessboard.append(chess_board.index(i) - i)
+        a_chessboard.append(chess_board.index(i) + i)
+
     for i in set(m_chessboard):
         count_i = m_chessboard.count(i)
         if count_i > 1:
@@ -29,7 +34,6 @@ def cost(chess_board):
             threat += int(temp)
     del m_chessboard
 
-    a_chessboard = [chess_board.index(i) + i for i in chess_board]
     for i in set(a_chessboard):
         count_i = a_chessboard.count(i)
         if count_i > 1:
@@ -54,7 +58,8 @@ def simulated_annealing():
             index_2 = random.randrange(0, N_QUEENS - 1)
             if index_1 != index_2:
                 break
-        successor[index_1], successor[index_2] = successor[index_2], successor[index_1]
+        successor[index_1], successor[index_2] = successor[index_2], \
+            successor[index_1]
         delta = cost(successor) - cost(answer)
         if delta < 0:
             answer = successor[:]
