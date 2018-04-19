@@ -7,7 +7,7 @@ TEMPERATURE = 4000
 
 
 def create_board(n):
-    # Create a chess boad with each queen on a row
+    '''Create a chess boad with each queen on a row'''
     chess_board = []
     temp = list(range(n))
     random.shuffle(temp)
@@ -19,8 +19,8 @@ def create_board(n):
     return chess_board
 
 
-# Calculate how many pairs queen threatened each other
 def cost(chess_board):
+    '''Calculate how many pairs queen threatened each other'''
     threat = 0
     m_chessboard = dict()
     a_chessboard = dict()
