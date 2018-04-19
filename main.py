@@ -7,6 +7,7 @@ TEMPERATURE = 4000
 
 
 def create_board(n):
+    # Create a chess boad with each queen on a row
     chess_board = []
     temp = list(range(n))
     random.shuffle(temp)
@@ -18,14 +19,15 @@ def create_board(n):
     return chess_board
 
 
+# Calculate how many pairs queen threatened each other
 def cost(chess_board):
     threat = 0
     m_chessboard = dict()
     a_chessboard = dict()
 
-    for i in chess_board:
-        temp_m = chess_board.index(i) - i
-        temp_a = chess_board.index(i) + i
+    for queen in chess_board:
+        temp_m = chess_board.index(queen) - queen
+        temp_a = chess_board.index(queen) + queen
         if temp_m not in m_chessboard:
             m_chessboard[temp_m] = 1
         else:
