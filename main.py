@@ -2,7 +2,7 @@ import random
 from math import factorial, exp
 import time
 
-N_QUEENS = 100
+N_QUEENS = 200
 TEMPERATURE = 4000
 
 
@@ -20,23 +20,35 @@ def create_board(n):
 
 def cost(chess_board):
     threat = 0
-    m_chessboard = []
-    a_chessboard = []
+    m_chessboard = dict()
+    a_chessboard = dict()
 
     for i in chess_board:
-        m_chessboard.append(chess_board.index(i) - i)
-        a_chessboard.append(chess_board.index(i) + i)
+        temp_m = chess_board.index(i) - i
+        temp_a = chess_board.index(i) + i
+        if temp_m not in m_chessboard:
+            m_chessboard[temp_m] = 1
+        else:
+            m_chessboard[temp_m] += 1
+        if temp_a not in a_chessboard:
+            a_chessboard[temp_a] = 1
+        else:
+            a_chessboard[temp_a] += 1
 
-    for i in set(m_chessboard):
-        count_i = m_chessboard.count(i)
-        if count_i > 1:
+    for i in m_chessboard:
+        count_i = m_chessboard[i]
+        if count_i == 1:
+            continue
+        else:
             temp = factorial(count_i) / (factorial(2) * factorial(count_i - 2))
             threat += int(temp)
     del m_chessboard
 
-    for i in set(a_chessboard):
-        count_i = a_chessboard.count(i)
-        if count_i > 1:
+    for i in a_chessboard:
+        count_i = a_chessboard[i]
+        if count_i == 1:
+            continue
+        else:
             temp = factorial(count_i) / (factorial(2) * factorial(count_i - 2))
             threat += int(temp)
     del a_chessboard
