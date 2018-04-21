@@ -1,20 +1,24 @@
 import random
 from math import factorial, exp
 import time
+from copy import deepcopy
 
-N_QUEENS = 200
+N_QUEENS = 400
 TEMPERATURE = 4000
 
 
 def create_board(n):
     '''Create a chess boad with each queen on a row'''
-    chess_board = []
-    temp = list(range(n))
+    chess_board = {}
+    temp = list(range(N_QUEENS))
     random.shuffle(temp)
+    column = 0
+
     while len(temp) > 0:
-        queen = random.choice(temp)
-        chess_board.append(queen)
-        temp.remove(queen)
+        row = random.choice(temp)
+        chess_board[column] = row
+        temp.remove(row)
+        column += 1
     del temp
     return chess_board
 
@@ -25,9 +29,9 @@ def cost(chess_board):
     m_chessboard = dict()
     a_chessboard = dict()
 
-    for queen in chess_board:
-        temp_m = chess_board.index(queen) - queen
-        temp_a = chess_board.index(queen) + queen
+    for column in chess_board:
+        temp_m = column - chess_board[column]
+        temp_a = column + chess_board[column]
         if temp_m not in m_chessboard:
             m_chessboard[temp_m] = 1
         else:
@@ -66,7 +70,7 @@ def simulated_annealing():
 
     while t > 0:
         t *= sch
-        successor = answer[:]
+        successor = deepcopy(answer)
         while True:
             index_1 = random.randrange(0, N_QUEENS - 1)
             index_2 = random.randrange(0, N_QUEENS - 1)
@@ -76,11 +80,11 @@ def simulated_annealing():
             successor[index_1]
         delta = cost(successor) - cost(answer)
         if delta < 0:
-            answer = successor[:]
+            answer = deepcopy(successor)
         else:
             p = exp(-delta / t)
             if random.uniform(0, 1) < p:
-                answer = successor[:]
+                answer = deepcopy(successor)
         if cost(answer) == 0:
             solution_found = True
             print_chess_board(answer)
@@ -90,8 +94,8 @@ def simulated_annealing():
 
 
 def print_chess_board(board):
-    for row in list(enumerate(board)):
-        print(row)
+    for column, row in board.items():
+        print(column, row)
 
 
 def main():
