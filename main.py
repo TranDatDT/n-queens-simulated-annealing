@@ -3,14 +3,14 @@ from math import factorial, exp
 import time
 from copy import deepcopy
 
-N_QUEENS = 400
+N_QUEENS = 8
 TEMPERATURE = 4000
 
 
 def create_board(n):
     '''Create a chess boad with each queen on a row'''
     chess_board = {}
-    temp = list(range(N_QUEENS))
+    temp = list(range(n))
     random.shuffle(temp)
     column = 0
 
