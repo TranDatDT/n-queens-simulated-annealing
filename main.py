@@ -1,10 +1,18 @@
 import random
-from math import factorial, exp
+from math import exp
 import time
 from copy import deepcopy
 
-N_QUEENS = 8
+N_QUEENS = 500
 TEMPERATURE = 4000
+
+
+def threat_calculate(n):
+    if n < 2:
+        return 0
+    if n == 2:
+        return 1
+    return (n - 1) * n / 2
 
 
 def create_board(n):
@@ -42,21 +50,11 @@ def cost(chess_board):
             a_chessboard[temp_a] += 1
 
     for i in m_chessboard:
-        count_i = m_chessboard[i]
-        if count_i == 1:
-            continue
-        else:
-            temp = factorial(count_i) / (factorial(2) * factorial(count_i - 2))
-            threat += int(temp)
+        threat += threat_calculate(m_chessboard[i])
     del m_chessboard
 
     for i in a_chessboard:
-        count_i = a_chessboard[i]
-        if count_i == 1:
-            continue
-        else:
-            temp = factorial(count_i) / (factorial(2) * factorial(count_i - 2))
-            threat += int(temp)
+        threat += threat_calculate(a_chessboard[i])
     del a_chessboard
 
     return threat
@@ -95,13 +93,13 @@ def simulated_annealing():
 
 def print_chess_board(board):
     for column, row in board.items():
-        print(column, row)
+        print("{} => {}".format(column, row))
 
 
 def main():
     start = time.time()
     simulated_annealing()
-    print(time.time() - start)
+    print("Runtime in second:", time.time() - start)
 
 
 if __name__ == "__main__":
