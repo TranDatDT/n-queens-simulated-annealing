@@ -3,11 +3,12 @@ from math import exp
 import time
 from copy import deepcopy
 
-N_QUEENS = 100
+N_QUEENS = 500
 TEMPERATURE = 4000
 
 
 def threat_calculate(n):
+    '''Combination formular. It is choosing two queens in n queens'''
     if n < 2:
         return 0
     if n == 2:
@@ -16,10 +17,10 @@ def threat_calculate(n):
 
 
 def create_board(n):
-    '''Create a chess boad with each queen on a row'''
+    '''Create a chess boad with a queen on a row'''
     chess_board = {}
     temp = list(range(n))
-    random.shuffle(temp)
+    random.shuffle(temp)  # shuffle to make sure it is random
     column = 0
 
     while len(temp) > 0:
@@ -32,7 +33,7 @@ def create_board(n):
 
 
 def cost(chess_board):
-    '''Calculate how many pairs queen threatened each other'''
+    '''Calculate how many pairs of threaten queen'''
     threat = 0
     m_chessboard = dict()
     a_chessboard = dict()
@@ -61,8 +62,13 @@ def cost(chess_board):
 
 
 def simulated_annealing():
+    '''Simulated Annealing'''
     solution_found = False
     answer = create_board(N_QUEENS)
+
+    # To avoid recounting when can not find a better state
+    cost_answer = cost(answer)
+
     t = TEMPERATURE
     sch = 0.99
 
@@ -75,11 +81,12 @@ def simulated_annealing():
             if successor[index_1] != successor[index_2]:
                 break
         successor[index_1], successor[index_2] = successor[index_2], \
-            successor[index_1]
-        delta = cost(successor) - cost(answer)
+            successor[index_1]  # swap two chosen queens
+        delta = cost(successor) - cost_answer
         if delta < 0 or random.uniform(0, 1) < exp(-delta / t):
             answer = deepcopy(successor)
-        if cost(answer) == 0:
+            cost_answer = cost(answer)
+        if cost_answer == 0:
             solution_found = True
             print_chess_board(answer)
             break
@@ -88,6 +95,7 @@ def simulated_annealing():
 
 
 def print_chess_board(board):
+    '''Print the chess board'''
     for column, row in board.items():
         print("{} => {}".format(column, row))
 
