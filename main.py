@@ -65,8 +65,6 @@ def simulated_annealing():
     answer = create_board(N_QUEENS)
     t = TEMPERATURE
     sch = 0.99
-    cache = {}
-    i = 0
 
     while t > 0:
         t *= sch
