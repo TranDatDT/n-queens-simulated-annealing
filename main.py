@@ -3,7 +3,7 @@ from math import exp
 import time
 from copy import deepcopy
 
-N_QUEENS = 500
+N_QUEENS = 100
 TEMPERATURE = 4000
 
 
@@ -65,6 +65,8 @@ def simulated_annealing():
     answer = create_board(N_QUEENS)
     t = TEMPERATURE
     sch = 0.99
+    cache = {}
+    i = 0
 
     while t > 0:
         t *= sch
@@ -72,17 +74,13 @@ def simulated_annealing():
         while True:
             index_1 = random.randrange(0, N_QUEENS - 1)
             index_2 = random.randrange(0, N_QUEENS - 1)
-            if index_1 != index_2:
+            if successor[index_1] != successor[index_2]:
                 break
         successor[index_1], successor[index_2] = successor[index_2], \
             successor[index_1]
         delta = cost(successor) - cost(answer)
-        if delta < 0:
+        if delta < 0 or random.uniform(0, 1) < exp(-delta / t):
             answer = deepcopy(successor)
-        else:
-            p = exp(-delta / t)
-            if random.uniform(0, 1) < p:
-                answer = deepcopy(successor)
         if cost(answer) == 0:
             solution_found = True
             print_chess_board(answer)
