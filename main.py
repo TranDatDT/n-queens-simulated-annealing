@@ -78,7 +78,7 @@ def simulated_annealing():
         while True:
             index_1 = random.randrange(0, N_QUEENS - 1)
             index_2 = random.randrange(0, N_QUEENS - 1)
-            if successor[index_1] != successor[index_2]:
+            if index_1 != index_2:
                 break
         successor[index_1], successor[index_2] = successor[index_2], \
             successor[index_1]  # swap two chosen queens
