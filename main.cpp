@@ -1,69 +1,56 @@
+/* Author: TranDatDT
+ * Release: 23:14 25/04/2018 GMT+7 */
+
 #include <iostream>
 #include <random>
 #include <vector>
-#include <string>
 #include <algorithm>
-
 #define TEMPERATURE 4000
 
 void print_chessboard(std::vector<int> chess_board) { // print the chessboard
-    for (int queen = 0; queen < chess_board.size(); queen++) {
+    for (int queen = 0; queen < chess_board.size(); queen++)
         std::cout << queen << " => " << chess_board[queen] << "\n";
-    }
 }
 
 int threat_calculate(int n) { // combination formula for calculate number of pairs of threaten queens
-    if (n < 2) {
-        return 0;
-    }
-    if (n == 2) {
-        return 1;
-    }
+    if (n < 2) return 0;
+    if (n == 2) return 1;
     return (n - 1) * n / 2;
 }
 
-int randrange(int start, int stop) { // random in a range
-    return (int) random() % (stop - start + 1) + start;
-}
-
-double uniform() { // random between 0 and 1
-    return (double) random() / (double) RAND_MAX;
-}
-
 int cost(std::vector<int> chess_board) { // cost function to count total of pairs of threaten queens
+    unsigned long size = chess_board.size();
     int threat = 0;
-    std::vector<int> m_chessboard;
-    std::vector<int> a_chessboard;
+    int m_chessboard[size];
+    int a_chessboard[size];
 
-    for (int queen = 0; queen < chess_board.size(); queen++) {
-        m_chessboard.push_back(queen - chess_board[queen]);
-        a_chessboard.push_back(queen + chess_board[queen]);
+    for (int i = 0; i < size; i++) {
+        a_chessboard[i] = i + chess_board[i];
+        m_chessboard[i] = i - chess_board[i];
     }
 
-    std::sort(m_chessboard.begin(), m_chessboard.end());
-    std::sort(a_chessboard.begin(), a_chessboard.end());
+    std::sort(m_chessboard, m_chessboard + size);
+    std::sort(a_chessboard, a_chessboard + size);
 
     int m_count = 1;
-    while (!m_chessboard.empty()) {
-        int temp = m_chessboard[0];
-        m_chessboard.erase(m_chessboard.begin());
-        if (temp == m_chessboard[0]) {
-            m_count += 1;
-        } else {
+    int a_count = 1;
+
+    for (int i = 0; i < size - 1; i++) {
+        int j = i + 1;
+        if (m_chessboard[i] == m_chessboard[j]) m_count += 1;
+        else {
             threat += threat_calculate(m_count);
             m_count = 1;
         }
-    }
-
-    int a_count = 1;
-    while (!a_chessboard.empty()) {
-        int temp = a_chessboard[0];
-        a_chessboard.erase(a_chessboard.begin());
-        if (temp == a_chessboard[0]) {
-            a_count += 1;
-        } else {
+        if (a_chessboard[i] == a_chessboard[j]) a_count += 1;
+        else {
             threat += threat_calculate(a_count);
             a_count = 1;
+        }
+        if (j == size - 1) {
+            threat += threat_calculate(m_count);
+            threat += threat_calculate(a_count);
+            break;
         }
     }
 
@@ -85,13 +72,14 @@ int main() {
     // create a chess board
     answer.reserve(n_queens);
     for (int i = 0; i < n_queens; i++) { // create a vector from 0 to N_QUEENS - 1
-        answer.push_back(i);
+        answer.emplace_back(i);
     }
     std::shuffle(answer.begin(), answer.end(), g); //shuffle chess board to make sure it is random
+    int cost_answer = cost(answer); // To avoid recounting in case can not find a better state
 
     // simulated annealing
     std::vector<int> successor;
-    bool solution_found = false;
+    successor.reserve(n_queens);
     double t = TEMPERATURE;
     double sch = 0.99;
     while (t > 0) {
@@ -100,25 +88,31 @@ int main() {
         t *= sch;
         successor = answer;
         while (true) { // random 2 queens
-            rand_col_1 = randrange(0, n_queens - 1);
-            rand_col_2 = randrange(0, n_queens - 1);
-            if (rand_col_1 != rand_col_2) break;
+            rand_col_1 = (int) random() % n_queens;
+            rand_col_2 = (int) random() % n_queens;
+            if (successor[rand_col_1] != successor[rand_col_2]) break;
         }
         std::swap(successor[rand_col_1], successor[rand_col_2]); // swap two queens chosen
-        double delta = cost(successor) - cost(answer);
-        if (delta < 0) answer = successor;
+        double delta = cost(successor) - cost_answer;
+        if (delta < 0){
+            answer = successor;
+            cost_answer = cost(answer);
+        }
         else {
             double p = exp(-delta / t);
-            if (uniform() < p) {
+            if (random() / double(RAND_MAX) < p) {
                 answer = successor;
+                cost_answer = cost(answer);
             }
         }
-        if (cost(answer) == 0) {
-            solution_found = true;
+        if (cost_answer == 0) {
             print_chessboard(answer);
             break;
         }
     }
-    if (!solution_found) std::cout << "Failed";
-    std::cout << "Runtime:" << (clock() - start) / 1000000.0 << " second" << std::endl;
+
+    clock_t stop = clock();
+    std::cout << "Runtime: " << (float) (stop - start) / 1000000 << " seconds" << std::endl;
+
+    return 0;
 }
