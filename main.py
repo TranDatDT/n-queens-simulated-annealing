@@ -35,8 +35,8 @@ def create_board(n):
 def cost(chess_board):
     '''Calculate how many pairs of threaten queen'''
     threat = 0
-    m_chessboard = dict()
-    a_chessboard = dict()
+    m_chessboard = {}
+    a_chessboard = {}
 
     for column in chess_board:
         temp_m = column - chess_board[column]
