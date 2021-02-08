@@ -1,2 +1,1 @@
-This is my homework.
-I used Python and the Simulated Annealing algorithm to solve the n-queens problem.
+Solve the n-queens problem with Python and Simulated Annealing algorithm.
