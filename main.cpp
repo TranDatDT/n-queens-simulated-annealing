@@ -26,6 +26,9 @@ int cost(std::vector<int> chess_board) { // cost function to count total of pair
 
     for (int i = 0; i < size; i++) {
         a_chessboard[i] = i + chess_board[i];
+    }
+    
+    for (int i = 0; i < size; i++) {
         m_chessboard[i] = i - chess_board[i];
     }
 
